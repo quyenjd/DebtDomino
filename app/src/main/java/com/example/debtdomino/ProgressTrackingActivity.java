@@ -16,9 +16,6 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_progress_tracking);
 
-        if (getSupportActionBar() != null) { // null check
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true); // show back button
-        }
 
         buttonRegister = (Button) findViewById(R.id.update_button);
 
