@@ -26,31 +26,39 @@
             android:text="Debt"
             android:textSize="18sp" />
 
-        <EditText
-            android:id="@+id/editTextDebtName"
+        <LinearLayout
+            android:id="@+id/debtLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Name of Debt" />
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/editTextDebtAmount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Amount of Debt"
-            android:inputType="numberDecimal" />
+            <EditText
+                android:id="@+id/editTextDebtName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Name of Debt" />
 
-        <EditText
-            android:id="@+id/editTextDebtRate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Rate"
-            android:inputType="numberDecimal" />
+            <EditText
+                android:id="@+id/editTextDebtAmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Amount of Debt"
+                android:inputType="numberDecimal" />
 
-        <Spinner
-            android:id="@+id/spinnerDebtFrequency"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:entries="@array/debt_frequency_array" />
+            <EditText
+                android:id="@+id/editTextDebtRate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Rate"
+                android:inputType="numberDecimal" />
+
+            <Spinner
+                android:id="@+id/spinnerDebtFrequency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/debt_frequency_array" />
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/buttonAddDebt"
@@ -66,24 +74,32 @@
             android:text="Income"
             android:textSize="18sp" />
 
-        <EditText
-            android:id="@+id/editTextIncomeName"
+        <LinearLayout
+            android:id="@+id/incomeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Name of Income" />
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/editTextIncomeAmount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Amount of Income"
-            android:inputType="numberDecimal" />
+            <EditText
+                android:id="@+id/editTextIncomeName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Name of Income" />
 
-        <Spinner
-            android:id="@+id/spinnerIncomeFrequency"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:entries="@array/income_frequency_array" />
+            <EditText
+                android:id="@+id/editTextIncomeAmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Amount of Income"
+                android:inputType="numberDecimal" />
+
+            <Spinner
+                android:id="@+id/spinnerIncomeFrequency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/income_frequency_array" />
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/buttonAddIncome"
