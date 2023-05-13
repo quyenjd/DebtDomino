@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="frequency_options">
+        <item>Weekly</item>
+        <item>Fortnightly</item>
+        <item>Quarterly</item>
+    </string-array>
+
+    <string-array name="income_frequency_array">
+        <item>Weekly</item>
+        <item>Fortnightly</item>
+        <item>Monthly</item>
+    </string-array>
+
+    <string-array name="debt_frequency_array">
+        <item>Weekly</item>
+        <item>Fortnightly</item>
+        <item>Monthly</item>
+    </string-array>
+</resources>
