@@ -1,18 +1,21 @@
 package com.example.debtdomino;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.text.InputType;
 
-
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.Calendar;
 
 public class DebtInventoryActivity extends AppCompatActivity {
     Button buttonRegister;
@@ -99,6 +102,7 @@ public class DebtInventoryActivity extends AppCompatActivity {
         debtLayout.addView(newDebtRate);
         debtLayout.addView(newDebtFrequency);
         debtLayout.addView(lineView); // Add the line
+
     }
 
 
@@ -141,6 +145,8 @@ public class DebtInventoryActivity extends AppCompatActivity {
         incomeLayout.addView(newIncomeFrequency);
         incomeLayout.addView(lineView); // Add the line
     }
+
+
 
 }
 

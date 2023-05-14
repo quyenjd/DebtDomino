@@ -58,6 +58,16 @@
                 android:layout_height="wrap_content"
                 android:entries="@array/debt_frequency_array" />
 
+            <EditText
+                android:id="@+id/debtTextNextPaymentDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Next Payment Date"
+                android:focusable="false"
+                android:inputType="date"
+                android:clickable="true"
+                android:onClick="showDatePickerDialog" />
+
         </LinearLayout>
 
         <Button
@@ -98,6 +108,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:entries="@array/income_frequency_array" />
+            <EditText
+                android:id="@+id/incomeTextNextPaymentDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Next Payment Date"
+                android:focusable="false"
+                android:inputType="date"
+                android:clickable="true"
+                android:onClick="showDatePickerDialog" />
 
         </LinearLayout>
 
@@ -117,3 +136,4 @@
     </LinearLayout>
 
 </ScrollView>
+
