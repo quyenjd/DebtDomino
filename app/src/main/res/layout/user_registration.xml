@@ -40,6 +40,12 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:hint="Password"/>
+        <EditText
+            android:id="@+id/editTextPhoneNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:hint="Phone Number"/>
 
         <EditText
             android:id="@+id/editTextConfirmPassword"
