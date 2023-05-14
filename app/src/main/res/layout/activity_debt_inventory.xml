@@ -18,7 +18,8 @@
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
             android:text="Debt"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textStyle="bold"/>
 
         <LinearLayout
             android:id="@+id/debtLayout"
@@ -65,19 +66,15 @@
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/buttonAddDebt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Add Additional Debt" />
-
         <TextView
             android:id="@+id/textViewIncome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
             android:text="Income"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+        />
 
         <LinearLayout
             android:id="@+id/incomeLayout"
@@ -114,12 +111,6 @@
                 android:onClick="showDatePickerDialog" />
 
         </LinearLayout>
-
-        <Button
-            android:id="@+id/buttonAddIncome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Add Additional Income" />
 
         <Button
             android:id="@+id/buttonFinalise"

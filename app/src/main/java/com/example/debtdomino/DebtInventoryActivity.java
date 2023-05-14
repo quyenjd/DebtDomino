@@ -30,9 +30,6 @@ import android.util.Log;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 
-
-
-
 public class DebtInventoryActivity extends AppCompatActivity {
     private static final String TAG = "";
     Button buttonRegister;
@@ -44,6 +41,7 @@ public class DebtInventoryActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_debt_inventory);
@@ -53,6 +51,8 @@ public class DebtInventoryActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         buttonRegister = (Button) findViewById(R.id.buttonFinalise);
+        debtLayout = findViewById(R.id.debtLayout);
+        incomeLayout = findViewById(R.id.incomeLayout);
 
         buttonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,118 +63,9 @@ public class DebtInventoryActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        debtLayout = findViewById(R.id.debtLayout);
-        incomeLayout = findViewById(R.id.incomeLayout);
-        addDebtButton = findViewById(R.id.buttonAddDebt);
-        addIncomeButton = findViewById(R.id.buttonAddIncome);
-
-        addDebtButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addDebtFields();
-            }
-        });
-
-        addIncomeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addIncomeFields();
-            }
-        });
     }
 
-    private void addDebtFields() {
-        // Create new EditTexts and Spinner
-        EditText newDebtName = new EditText(this);
-        EditText newDebtAmount = new EditText(this);
-        EditText newDebtRate = new EditText(this);
-        Spinner newDebtFrequency = new Spinner(this);
-        Button newDebtDatePicker = new Button(this);
-        View lineView = new View(this);
-
-        // Set properties for the View (line)
-        LinearLayout.LayoutParams lineParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 5);
-        lineParams.setMargins(0, 10, 0, 10);
-        lineView.setLayoutParams(lineParams);
-        lineView.setBackgroundColor(Color.parseColor("#000000"));
-
-        // Set some properties of the EditTexts
-        newDebtName.setHint("Name of Debt");
-        newDebtAmount.setHint("Amount of Debt");
-        newDebtRate.setHint("Rate");
-        newDebtAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
-        newDebtRate.setInputType(InputType.TYPE_CLASS_NUMBER);
-
-        // Set properties for the Button
-        newDebtDatePicker.setText("Choose Date");
-        newDebtDatePicker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDatePickerDialog(view);
-            }
-        });
-
-        // Set some properties of the Spinner
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.debt_frequency_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        newDebtFrequency.setAdapter(adapter);
-
-        // Add the EditTexts and Spinner to the layout
-        debtLayout.addView(newDebtName);
-        debtLayout.addView(newDebtAmount);
-        debtLayout.addView(newDebtRate);
-        debtLayout.addView(newDebtFrequency);
-        debtLayout.addView(newDebtDatePicker);
-        debtLayout.addView(lineView);
-    }
-
-    private void addIncomeFields() {
-        // Create new EditTexts and Spinner
-        EditText newIncomeName = new EditText(this);
-        EditText newIncomeAmount = new EditText(this);
-        Spinner newIncomeFrequency = new Spinner(this);
-        Button newIncomeDatePicker = new Button(this);
-        View lineView = new View(this);
-
-        // Set properties for the View (line)
-        LinearLayout.LayoutParams lineParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 5);
-        lineParams.setMargins(0, 10, 0, 10);
-        lineView.setLayoutParams(lineParams);
-        lineView.setBackgroundColor(Color.parseColor("#000000"));
-
-        // Set some properties of the EditTexts
-        newIncomeName.setHint("Name of Income");
-        newIncomeAmount.setHint("Amount of Income");
-        newIncomeAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
-
-        // Set properties for the Button
-        newIncomeDatePicker.setText("Choose Date");
-        newIncomeDatePicker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDatePickerDialog(view);
-            }
-        });
-
-        // Set some properties of the Spinner
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.income_frequency_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        newIncomeFrequency.setAdapter(adapter);
-
-        // Add the EditTexts and Spinner to the layout
-        incomeLayout.addView(newIncomeName);
-        incomeLayout.addView(newIncomeAmount);
-        incomeLayout.addView(newIncomeFrequency);
-        incomeLayout.addView(newIncomeDatePicker);
-        incomeLayout.addView(lineView);
-    }
-
-    public void showDatePickerDialog(View v) {
+    public void showDatePickerDialog(final View v) {
         // Get the current date.
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
@@ -187,13 +78,15 @@ public class DebtInventoryActivity extends AppCompatActivity {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         // Store the date selected for use when saving to Firestore.
-                        c.set(year, month, dayOfMonth);
-                        ((Button)v).setText(new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(c.getTime()));
+                        if (v instanceof EditText) {
+                            EditText editText = (EditText) v;
+                            c.set(year, month, dayOfMonth);
+                            editText.setText(new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(c.getTime()));
+                        }
                     }
                 }, year, month, day);
         datePickerDialog.show();
     }
-
 
     private void saveDataToFirestore() {
         // Get the current user's ID from Firebase Authentication.
@@ -208,13 +101,29 @@ public class DebtInventoryActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Iterate through the children of debtLayout and incomeLayout.
-        for (int i = 0; i < debtLayout.getChildCount(); i += 5) {
+        for (int i = 0; i < debtLayout.getChildCount(); i += 6) {
             // Retrieve data from EditTexts and Spinner.
-            String name = ((EditText) debtLayout.getChildAt(i)).getText().toString();
-            String amount = ((EditText) debtLayout.getChildAt(i + 1)).getText().toString();
-            String rate = ((EditText) debtLayout.getChildAt(i + 2)).getText().toString();
-            String frequency = ((Spinner) debtLayout.getChildAt(i + 3)).getSelectedItem().toString();
-            String dateOfNextPayment = ((Button) debtLayout.getChildAt(i + 4)).getText().toString();
+            // Check if the views are of the correct type before casting.
+            if (!(debtLayout.getChildAt(i) instanceof EditText &&
+                    debtLayout.getChildAt(i + 1) instanceof EditText &&
+                    debtLayout.getChildAt(i + 2) instanceof EditText &&
+                    debtLayout.getChildAt(i + 3) instanceof Spinner &&
+                    debtLayout.getChildAt(i + 4) instanceof EditText)) {
+                continue;
+            }
+
+            // Retrieve data from EditTexts and Spinner.
+            EditText nameEditText = (EditText) debtLayout.getChildAt(i);
+            EditText amountEditText = (EditText) debtLayout.getChildAt(i + 1);
+            EditText rateEditText = (EditText) debtLayout.getChildAt(i + 2);
+            Spinner frequencySpinner = (Spinner) debtLayout.getChildAt(i + 3);
+            EditText datePickerButton = (EditText) debtLayout.getChildAt(i + 4);
+
+            String name = nameEditText.getText().toString();
+            String amount = amountEditText.getText().toString();
+            String rate = rateEditText.getText().toString();
+            String frequency = frequencySpinner.getSelectedItem().toString();
+            String dateOfNextPayment = datePickerButton.getText().toString();
 
             // Create a new document in the "userDebts" collection.
             Map<String, Object> debt = new HashMap<>();
@@ -242,12 +151,26 @@ public class DebtInventoryActivity extends AppCompatActivity {
                     });
         }
 
-        for (int i = 0; i < incomeLayout.getChildCount(); i += 4) {
+        for (int i = 0; i < incomeLayout.getChildCount(); i += 5) {
             // Retrieve data from EditTexts and Spinner.
-            String name = ((EditText) incomeLayout.getChildAt(i)).getText().toString();
-            String amount = ((EditText) incomeLayout.getChildAt(i + 1)).getText().toString();
-            String frequency = ((Spinner) incomeLayout.getChildAt(i + 2)).getSelectedItem().toString();
-            String dateOfNextPayment = ((Button) incomeLayout.getChildAt(i + 3)).getText().toString();
+            // Check if the views are of the correct type before casting.
+            if (!(incomeLayout.getChildAt(i) instanceof EditText &&
+                    incomeLayout.getChildAt(i + 1) instanceof EditText &&
+                    incomeLayout.getChildAt(i + 2) instanceof Spinner &&
+                    incomeLayout.getChildAt(i + 3) instanceof EditText)) {
+                continue;
+            }
+
+            // Retrieve data from EditTexts and Spinner.
+            EditText nameEditText = (EditText) incomeLayout.getChildAt(i);
+            EditText amountEditText = (EditText) incomeLayout.getChildAt(i + 1);
+            Spinner frequencySpinner = (Spinner) incomeLayout.getChildAt(i + 2);
+            EditText datePickerButton = (EditText) incomeLayout.getChildAt(i + 3);
+
+            String name = nameEditText.getText().toString();
+            String amount = amountEditText.getText().toString();
+            String frequency = frequencySpinner.getSelectedItem().toString();
+            String dateOfNextPayment = datePickerButton.getText().toString();
 
             // Create a new document in the "userDebts" collection.
             Map<String, Object> income = new HashMap<>();
@@ -273,6 +196,5 @@ public class DebtInventoryActivity extends AppCompatActivity {
                         }
                     });
         }
-    }
+    }}
 
-}
