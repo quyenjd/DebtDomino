@@ -66,7 +66,7 @@
                 android:focusable="false"
                 android:inputType="date"
                 android:clickable="true"
-                android:onClick="showDatePickerDialog" />
+                ></EditText>
 
         </LinearLayout>
 
