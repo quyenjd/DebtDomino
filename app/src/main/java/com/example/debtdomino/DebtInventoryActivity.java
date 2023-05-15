@@ -125,30 +125,33 @@ public class DebtInventoryActivity extends AppCompatActivity {
             String frequency = frequencySpinner.getSelectedItem().toString();
             String dateOfNextPayment = datePickerButton.getText().toString();
 
-            // Create a new document in the "userDebts" collection.
-            Map<String, Object> debt = new HashMap<>();
-            debt.put("nameOf", name);
-            debt.put("amountOf", amount);
-            debt.put("rate", rate);
-            debt.put("frequency", frequency);
-            debt.put("type", "debt");
-            debt.put("dateOfNextPayment", dateOfNextPayment);
-            debt.put("uid", userId);
+            // Check if any of the fields are empty before storing.
+            if (!name.isEmpty() && !amount.isEmpty() && !rate.isEmpty() && !frequency.isEmpty() && !dateOfNextPayment.isEmpty()) {
+                // Create a new document in the "userDebts" collection.
+                Map<String, Object> debt = new HashMap<>();
+                debt.put("nameOf", name);
+                debt.put("amountOf", amount);
+                debt.put("rate", rate);
+                debt.put("frequency", frequency);
+                debt.put("type", "debt");
+                debt.put("dateOfNextPayment", dateOfNextPayment);
+                debt.put("uid", userId);
 
-            db.collection("userDebts")
-                    .add(debt)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w(TAG, "Error adding document", e);
-                        }
-                    });
+                db.collection("userDebts")
+                        .add(debt)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error adding document", e);
+                            }
+                        });
+            }
         }
 
         for (int i = 0; i < incomeLayout.getChildCount(); i += 5) {
@@ -172,29 +175,33 @@ public class DebtInventoryActivity extends AppCompatActivity {
             String frequency = frequencySpinner.getSelectedItem().toString();
             String dateOfNextPayment = datePickerButton.getText().toString();
 
-            // Create a new document in the "userDebts" collection.
-            Map<String, Object> income = new HashMap<>();
-            income.put("nameOf", name);
-            income.put("amountOf", amount);
-            income.put("frequency", frequency);
-            income.put("type", "income");
-            income.put("dateOfNextPayment", dateOfNextPayment);
-            income.put("uid", userId);
+            // Check if any of the fields are empty before storing.
+            if (!name.isEmpty() && !amount.isEmpty() && !frequency.isEmpty() && !dateOfNextPayment.isEmpty()) {
+                // Create a new document in the "userDebts" collection.
+                Map<String, Object> income = new HashMap<>();
+                income.put("nameOf", name);
+                income.put("amountOf", amount);
+                income.put("frequency", frequency);
+                income.put("type", "income");
+                income.put("dateOfNextPayment", dateOfNextPayment);
+                income.put("uid", userId);
 
-            db.collection("userDebts")
-                    .add(income)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w(TAG, "Error adding document", e);
-                        }
-                    });
+                db.collection("userDebts")
+                        .add(income)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error adding document", e);
+                            }
+                        });
+            }
         }
-    }}
+    } }
+
 

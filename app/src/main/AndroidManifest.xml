@@ -28,6 +28,7 @@
         </activity>
         <activity android:name=".ProgressTrackingActivity" />
         <activity android:name=".DebtInventoryActivity" />
+        <activity android:name=".DebtDetailsActivity" />
     </application>
 
 </manifest>

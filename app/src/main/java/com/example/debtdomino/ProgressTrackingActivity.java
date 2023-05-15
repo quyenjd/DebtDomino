@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -16,17 +17,25 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProgressTrackingActivity extends AppCompatActivity {
-
+    private static final String TAG = "ProgressTrackingActivity";
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
 
     private Button buttonRegister;
     private TextView welcomeText;
+    private TextView debtInfoTextView;
+    private TextView incomeInfoTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_progress_tracking);
 
@@ -35,7 +44,8 @@ public class ProgressTrackingActivity extends AppCompatActivity {
 
         welcomeText = findViewById(R.id.welcome_text);
         buttonRegister = findViewById(R.id.update_button);
-
+        debtInfoTextView = findViewById(R.id.debt_info);
+        incomeInfoTextView = findViewById(R.id.income_info);
         if (currentUser != null) {
             db.collection("users")
                     .document(currentUser.getUid())
@@ -56,6 +66,51 @@ public class ProgressTrackingActivity extends AppCompatActivity {
                             }
                         }
                     });
+
+// Fetch user debts.
+            db.collection("userDebts")
+                    .whereEqualTo("uid", currentUser.getUid())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                List<Debt> debts = new ArrayList<>();
+                                double totalDebt = 0;
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    String nameOf = document.getString("nameOf");
+                                    String amountOfStr = document.getString("amountOf");
+                                    double amountOf = Double.parseDouble(amountOfStr);
+                                    String rate = document.getString("rate");
+                                    String frequency = document.getString("frequency");
+                                    String type = document.getString("type");
+                                    String dateOfNextPayment = document.getString("dateOfNextPayment");
+                                    String uid = document.getString("uid");
+
+                                    Debt debt = new Debt(nameOf, amountOfStr, rate, frequency, type, dateOfNextPayment, uid);
+                                    debts.add(debt);
+                                    totalDebt += amountOf;
+                                }
+
+                                debtInfoTextView.setText("Total debt: " + totalDebt);
+
+                            } else {
+                                Log.d(TAG, "Error getting documents: ", task.getException());
+                            }
+                        }
+                    });
+
+            // Set onClickListener for debtInfoTextView
+            debtInfoTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Perform your action here
+                    // For example, start a new activity
+                    Intent intent = new Intent(ProgressTrackingActivity.this, DebtDetailsActivity.class);
+                    startActivity(intent);
+                }
+            });
+
         }
 
         buttonRegister.setOnClickListener(new View.OnClickListener() {
@@ -66,4 +121,5 @@ public class ProgressTrackingActivity extends AppCompatActivity {
             }
         });
     }
+
 }

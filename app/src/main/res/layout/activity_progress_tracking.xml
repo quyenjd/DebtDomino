@@ -41,11 +41,35 @@
 
     </FrameLayout>
 
+    <LinearLayout
+        android:id="@+id/debt_income_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pie_chart_placeholder"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/debt_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Debt Info"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/income_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Income Info"
+            android:textSize="16sp"/>
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/update_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/pie_chart_placeholder"
+        android:layout_below="@+id/debt_income_layout"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"
         android:text="Update Income/Expenses" />
