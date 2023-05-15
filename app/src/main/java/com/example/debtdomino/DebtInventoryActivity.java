@@ -50,7 +50,7 @@ public class DebtInventoryActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        buttonRegister = (Button) findViewById(R.id.buttonFinalise);
+        buttonRegister = findViewById(R.id.buttonFinalise);
         debtLayout = findViewById(R.id.debtLayout);
         incomeLayout = findViewById(R.id.incomeLayout);
 
