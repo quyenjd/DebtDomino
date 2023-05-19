@@ -21,6 +21,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.view.MenuItem;
+import android.content.Intent;
 
 public class ProgressTrackingActivity extends AppCompatActivity {
     private static final String TAG = "ProgressTrackingActivity";
@@ -35,9 +37,9 @@ public class ProgressTrackingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_progress_tracking);
+
 
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -99,6 +101,39 @@ public class ProgressTrackingActivity extends AppCompatActivity {
                             }
                         }
                     });
+            // Fetch user income.
+            db.collection("userDebts")
+                    .whereEqualTo("uid", currentUser.getUid())
+                    .whereEqualTo("type", "income")
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                List<Income> incomes = new ArrayList<>();
+                                double totalIncome = 0;
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    String nameOf = document.getString("nameOf");
+                                    String amountOfStr = document.getString("amountOf");
+                                    double amountOf = Double.parseDouble(amountOfStr);
+                                    String frequency = document.getString("frequency");
+                                    String type = document.getString("type");
+                                    String dateOfNextPayment = document.getString("dateOfNextPayment");
+                                    String uid = document.getString("uid");
+
+                                    Income income = new Income(nameOf, amountOfStr, frequency, type, dateOfNextPayment, uid);
+                                    incomes.add(income);
+                                    totalIncome += amountOf;
+                                }
+
+                                incomeInfoTextView.setText("Total income: " + totalIncome);
+
+                            } else {
+                                Log.d(TAG, "Error getting documents: ", task.getException());
+                            }
+                        }
+                    });
+
 
             // Set onClickListener for debtInfoTextView
             debtInfoTextView.setOnClickListener(new View.OnClickListener() {
@@ -107,6 +142,15 @@ public class ProgressTrackingActivity extends AppCompatActivity {
                     // Perform your action here
                     // For example, start a new activity
                     Intent intent = new Intent(ProgressTrackingActivity.this, DebtDetailsActivity.class);
+                    startActivity(intent);
+                }
+            });
+            incomeInfoTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Perform your action here
+                    // For example, start a new activity
+                    Intent intent = new Intent(ProgressTrackingActivity.this, IncomeDetailsActivity.class);
                     startActivity(intent);
                 }
             });

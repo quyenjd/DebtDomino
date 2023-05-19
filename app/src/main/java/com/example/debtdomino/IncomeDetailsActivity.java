@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,54 +21,52 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DebtDetailsActivity extends AppCompatActivity {
-    private static final String TAG = "DebtDetailsActivity";
+public class IncomeDetailsActivity extends AppCompatActivity {
+    private static final String TAG = "IncomeDetailsActivity";
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
     private RecyclerView recyclerView;
-    private DebtAdapter adapter;
+    private IncomeAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (getSupportActionBar() != null) { // null check
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true); // show back button
-        }
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.item_debt);
-
+        if(getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         // Initialize RecyclerView
         recyclerView = findViewById(R.id.debt_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new DebtAdapter(new ArrayList<>());
+        adapter = new IncomeAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
         if (currentUser != null) {
-            // Fetch user debts.
+            // Fetch user incomes.
             db.collection("userDebts")
                     .whereEqualTo("uid", currentUser.getUid())
+                    .whereEqualTo("type", "income")
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
-                                List<Debt> debts = new ArrayList<>();
+                                List<Income> incomes = new ArrayList<>();
                                 for (DocumentSnapshot document : task.getResult()) {
                                     String nameOf = document.getString("nameOf");
                                     String amountOfStr = document.getString("amountOf");
-                                    String rate = document.getString("rate");
                                     String frequency = document.getString("frequency");
                                     String type = document.getString("type");
                                     String dateOfNextPayment = document.getString("dateOfNextPayment");
                                     String uid = document.getString("uid");
 
-                                    Debt debt = new Debt(nameOf, amountOfStr, rate, frequency, type, dateOfNextPayment, uid);
-                                    debts.add(debt);
+                                    Income income = new Income(nameOf, amountOfStr, frequency, type, dateOfNextPayment, uid);
+                                    incomes.add(income);
                                 }
-                                adapter.updateData(debts);  // Update RecyclerView data
+                                adapter.updateData(incomes);  // Update RecyclerView data
                             } else {
                                 Log.d(TAG, "Error getting documents: ", task.getException());
                             }
@@ -89,5 +86,5 @@ public class DebtDetailsActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-}
+
+} }

@@ -44,7 +44,7 @@ public class RegistrationActivity extends AppCompatActivity {
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
-        editTextPhoneNumber = findViewById(R.id.editTextPhoneNumber); // make sure you have this field in your layout
+        editTextPhoneNumber = findViewById(R.id.editTextPhoneNumber);
 
         buttonRegister = findViewById(R.id.buttonRegister);
 
