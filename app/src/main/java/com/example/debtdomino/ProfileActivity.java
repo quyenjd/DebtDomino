@@ -12,6 +12,7 @@ import android.widget.Toast;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,6 +34,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView editFormTitle, editFormPasswordNote;
     private EditText editTextName, editTextEmail, editTextCurrentPassword, editTextPassword, editTextConfirmPassword,
             editTextPhoneNumber;
+    private Spinner editSpinnerPayoffMethod;
     private Button editFormButton;
     private ProgressBar progressBar;
 
@@ -72,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
         editTextPhoneNumber = findViewById(R.id.editTextPhoneNumber);
+        editSpinnerPayoffMethod = findViewById(R.id.editSpinnerPayoffMethod);
         editFormButton = findViewById(R.id.editFormButton);
         progressBar = findViewById(R.id.progressBar);
 
@@ -91,6 +94,9 @@ public class ProfileActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             editTextName.setText(task.getResult().getString("name"));
                             editTextPhoneNumber.setText(task.getResult().getString("phone_number"));
+                            editSpinnerPayoffMethod.setSelection(
+                                    String.valueOf(task.getResult().getString("payoff_method")).equals("Snowball") ? 1
+                                            : 0);
                             progressBar.setVisibility(View.GONE);
                         } else {
                             Toast.makeText(ProfileActivity.this,
@@ -107,6 +113,7 @@ public class ProfileActivity extends AppCompatActivity {
                 final String name = editTextName.getText().toString();
                 final String email = editTextEmail.getText().toString();
                 final String phoneNumber = editTextPhoneNumber.getText().toString();
+                final String debtPayoffMethod = editSpinnerPayoffMethod.getSelectedItem().toString();
                 String currentPassword = editTextCurrentPassword.getText().toString();
                 String password = editTextPassword.getText().toString();
                 String confirmPassword = editTextConfirmPassword.getText().toString();
@@ -154,6 +161,7 @@ public class ProfileActivity extends AppCompatActivity {
                 Map<String, Object> userMap = new HashMap<>();
                 userMap.put("name", name);
                 userMap.put("phone_number", phoneNumber);
+                userMap.put("payoff_method", debtPayoffMethod);
 
                 db.collection("users").document(user.getUid())
                         .set(userMap)

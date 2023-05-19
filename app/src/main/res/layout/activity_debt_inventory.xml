@@ -50,7 +50,7 @@
                 android:id="@+id/spinnerDebtFrequency"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:entries="@array/debt_frequency_array" />
+                android:entries="@array/frequency_options" />
 
             <EditText
                 android:id="@+id/debtTextNextPaymentDate"

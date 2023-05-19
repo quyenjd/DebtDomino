@@ -12,6 +12,7 @@ import android.widget.Toast;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -31,6 +32,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private TextView editFormTitle, editFormPasswordNote;
     private EditText editTextName, editTextEmail, editTextCurrentPassword, editTextPassword, editTextConfirmPassword,
             editTextPhoneNumber;
+    private Spinner editSpinnerPayoffMethod;
     private Button editFormButton;
     private ProgressBar progressBar;
 
@@ -65,6 +67,7 @@ public class RegistrationActivity extends AppCompatActivity {
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
         editTextPhoneNumber = findViewById(R.id.editTextPhoneNumber);
+        editSpinnerPayoffMethod = findViewById(R.id.editSpinnerPayoffMethod);
         editFormButton = findViewById(R.id.editFormButton);
         progressBar = findViewById(R.id.progressBar);
 
@@ -81,6 +84,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 final String name = editTextName.getText().toString();
                 final String email = editTextEmail.getText().toString();
                 final String phoneNumber = editTextPhoneNumber.getText().toString();
+                final String debtPayoffMethod = editSpinnerPayoffMethod.getSelectedItem().toString();
                 String password = editTextPassword.getText().toString();
                 String confirmPassword = editTextConfirmPassword.getText().toString();
 
@@ -96,6 +100,7 @@ public class RegistrationActivity extends AppCompatActivity {
                                         userMap.put("name", name);
                                         userMap.put("email", email);
                                         userMap.put("phone_number", phoneNumber);
+                                        userMap.put("payoff_method", debtPayoffMethod);
 
                                         db.collection("users").document(user.getUid())
                                                 .set(userMap)

@@ -6,15 +6,8 @@
         <item>Quarterly</item>
     </string-array>
 
-    <string-array name="income_frequency_array">
-        <item>Weekly</item>
-        <item>Fortnightly</item>
-        <item>Monthly</item>
-    </string-array>
-
-    <string-array name="debt_frequency_array">
-        <item>Weekly</item>
-        <item>Fortnightly</item>
-        <item>Monthly</item>
+    <string-array name="debt_payoff_methods">
+        <item>Avalanche</item>
+        <item>Snowball</item>
     </string-array>
 </resources>
