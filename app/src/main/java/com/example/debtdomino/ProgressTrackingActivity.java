@@ -14,6 +14,8 @@ import android.text.Html;
 import android.os.Build;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import android.content.DialogInterface;
+import android.app.AlertDialog;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -40,6 +42,8 @@ public class ProgressTrackingActivity extends AppCompatActivity {
     private RecyclerView incomeListView;
     private TextView incomeInfoTextView;
     private Button incomeAddButton;
+    private Button logoutButton;
+    private Button updateProfileButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,9 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         incomeListView.setLayoutManager(new LinearLayoutManager(this));
         incomeInfoTextView = findViewById(R.id.income_info);
         incomeAddButton = findViewById(R.id.income_add_button);
+        logoutButton = findViewById(R.id.logout_button);
+        updateProfileButton = findViewById(R.id.update_profile_button);
+
         if (currentUser != null) {
             db.collection("users")
                     .document(currentUser.getUid())
@@ -166,6 +173,8 @@ public class ProgressTrackingActivity extends AppCompatActivity {
                             }
                         }
                     });
+        } else {
+            onBackPressed();
         }
 
         // Click events for debt and income add buttons.
@@ -183,6 +192,45 @@ public class ProgressTrackingActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(ProgressTrackingActivity.this, IncomeInventoryActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        // Click events for update profile and logout buttons
+
+        updateProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProgressTrackingActivity.this, ProfileActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ProgressTrackingActivity.this);
+                builder.setTitle("Confirmation");
+                builder.setMessage("Are you sure to logout?");
+
+                // Set positive button
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        FirebaseAuth.getInstance().signOut();
+                        Intent intent = new Intent(ProgressTrackingActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
+                // Set negative button
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
     }

@@ -94,4 +94,30 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_below="@id/income_frame"
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="16dp"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/update_profile_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Update profile" />
+
+        <Button
+            android:id="@+id/logout_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Logout"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/red" />
+
+    </LinearLayout>
+
 </RelativeLayout>
