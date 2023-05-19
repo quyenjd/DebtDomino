@@ -30,6 +30,12 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        // If the user has already logged in, jump to next view.
+        if (mAuth.getCurrentUser() != null) {
+            Intent intent = new Intent(MainActivity.this, ProgressTrackingActivity.class);
+            startActivity(intent);
+        }
+
         usernameEditText = findViewById(R.id.username_edit_text);
         passwordEditText = findViewById(R.id.password_edit_text);
 
@@ -59,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                                     startActivity(intent);
                                 } else {
                                     // If sign in fails, display a message to the user.
-                                    Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.makeText(MainActivity.this, "Authentication failed: " + task.getException().getMessage(),
                                             Toast.LENGTH_SHORT).show();
                                 }
                             }

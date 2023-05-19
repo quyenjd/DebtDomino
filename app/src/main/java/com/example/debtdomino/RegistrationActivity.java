@@ -88,7 +88,7 @@ public class RegistrationActivity extends AppCompatActivity {
                                                 });
                                     } else {
                                         // If sign up fails, display a message to the user.
-                                        Toast.makeText(RegistrationActivity.this, "Authentication failed.",
+                                        Toast.makeText(RegistrationActivity.this, "Authentication failed: " + task.getException().getMessage(),
                                                 Toast.LENGTH_SHORT).show();
                                     }
                                 }

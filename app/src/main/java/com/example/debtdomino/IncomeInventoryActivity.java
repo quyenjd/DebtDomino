@@ -32,10 +32,10 @@ import android.util.Log;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 
-public class DebtInventoryActivity extends AppCompatActivity {
-    private static final String TAG = "DebtInventoryActivity";
+public class IncomeInventoryActivity extends AppCompatActivity {
+    private static final String TAG = "IncomeInventoryActivity";
     Button buttonSave;
-    LinearLayout debtLayout;
+    LinearLayout incomeLayout;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -58,21 +58,21 @@ public class DebtInventoryActivity extends AppCompatActivity {
         }
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_debt_inventory);
+        setContentView(R.layout.activity_income_inventory);
 
         // Initialize Firebase Auth and Firestore
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
         buttonSave = findViewById(R.id.buttonSave);
-        debtLayout = findViewById(R.id.debtLayout);
+        incomeLayout = findViewById(R.id.incomeLayout);
 
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Get data from fields and save to Firestore
                 saveDataToFirestore();
-                Intent intent = new Intent(DebtInventoryActivity.this, ProgressTrackingActivity.class);
+                Intent intent = new Intent(IncomeInventoryActivity.this, ProgressTrackingActivity.class);
                 startActivity(intent);
             }
         });
@@ -113,44 +113,39 @@ public class DebtInventoryActivity extends AppCompatActivity {
         // Initialize Firestore.
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Iterate through the children of debtLayout.
-        for (int i = 0; i < debtLayout.getChildCount(); i += 6) {
+        // Iterate through the children of incomeLayout.
+        for (int i = 0; i < incomeLayout.getChildCount(); i += 5) {
             // Retrieve data from EditTexts and Spinner.
             // Check if the views are of the correct type before casting.
-            if (!(debtLayout.getChildAt(i) instanceof EditText &&
-                    debtLayout.getChildAt(i + 1) instanceof EditText &&
-                    debtLayout.getChildAt(i + 2) instanceof EditText &&
-                    debtLayout.getChildAt(i + 3) instanceof Spinner &&
-                    debtLayout.getChildAt(i + 4) instanceof EditText)) {
+            if (!(incomeLayout.getChildAt(i) instanceof EditText &&
+                    incomeLayout.getChildAt(i + 1) instanceof EditText &&
+                    incomeLayout.getChildAt(i + 2) instanceof Spinner &&
+                    incomeLayout.getChildAt(i + 3) instanceof EditText)) {
                 continue;
             }
 
             // Retrieve data from EditTexts and Spinner.
-            EditText nameEditText = (EditText) debtLayout.getChildAt(i);
-            EditText amountEditText = (EditText) debtLayout.getChildAt(i + 1);
-            EditText rateEditText = (EditText) debtLayout.getChildAt(i + 2);
-            Spinner frequencySpinner = (Spinner) debtLayout.getChildAt(i + 3);
-            EditText datePickerButton = (EditText) debtLayout.getChildAt(i + 4);
+            EditText nameEditText = (EditText) incomeLayout.getChildAt(i);
+            EditText amountEditText = (EditText) incomeLayout.getChildAt(i + 1);
+            Spinner frequencySpinner = (Spinner) incomeLayout.getChildAt(i + 2);
+            EditText datePickerButton = (EditText) incomeLayout.getChildAt(i + 3);
 
             String name = nameEditText.getText().toString();
             String amount = amountEditText.getText().toString();
-            String rate = rateEditText.getText().toString();
             String frequency = frequencySpinner.getSelectedItem().toString();
             String dateOfNextPayment = datePickerButton.getText().toString();
 
             // Check if any of the fields are empty before storing.
-            if (!name.isEmpty() && !amount.isEmpty() && !rate.isEmpty() && !frequency.isEmpty()
-                    && !dateOfNextPayment.isEmpty()) {
-                Map<String, Object> debt = new HashMap<>();
-                debt.put("nameOf", name);
-                debt.put("amountOf", amount);
-                debt.put("rate", rate);
-                debt.put("frequency", frequency);
-                debt.put("dateOfNextPayment", dateOfNextPayment);
-                debt.put("uid", userId);
+            if (!name.isEmpty() && !amount.isEmpty() && !frequency.isEmpty() && !dateOfNextPayment.isEmpty()) {
+                Map<String, Object> income = new HashMap<>();
+                income.put("nameOf", name);
+                income.put("amountOf", amount);
+                income.put("frequency", frequency);
+                income.put("dateOfNextPayment", dateOfNextPayment);
+                income.put("uid", userId);
 
-                db.collection("debts")
-                        .add(debt)
+                db.collection("incomes")
+                        .add(income)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
@@ -164,7 +159,7 @@ public class DebtInventoryActivity extends AppCompatActivity {
                             }
                         });
             } else {
-                Toast.makeText(this, "Invalid debt information, please try again", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Invalid income information, please try again", Toast.LENGTH_SHORT).show();
             }
         }
     }

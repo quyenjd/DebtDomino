@@ -10,6 +10,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.text.Html;
+import android.os.Build;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -29,10 +33,13 @@ public class ProgressTrackingActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
 
-    private Button buttonRegister;
-    private TextView welcomeText;
+    private TextView nameTextView;
+    private RecyclerView debtListView;
     private TextView debtInfoTextView;
+    private Button debtAddButton;
+    private RecyclerView incomeListView;
     private TextView incomeInfoTextView;
+    private Button incomeAddButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +47,18 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_progress_tracking);
 
-
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        welcomeText = findViewById(R.id.welcome_text);
-        buttonRegister = findViewById(R.id.update_button);
+        nameTextView = findViewById(R.id.name_text);
+        debtListView = findViewById(R.id.debt_list);
+        debtListView.setLayoutManager(new LinearLayoutManager(this));
         debtInfoTextView = findViewById(R.id.debt_info);
+        debtAddButton = findViewById(R.id.debt_add_button);
+        incomeListView = findViewById(R.id.income_list);
+        incomeListView.setLayoutManager(new LinearLayoutManager(this));
         incomeInfoTextView = findViewById(R.id.income_info);
+        incomeAddButton = findViewById(R.id.income_add_button);
         if (currentUser != null) {
             db.collection("users")
                     .document(currentUser.getUid())
@@ -59,18 +70,20 @@ public class ProgressTrackingActivity extends AppCompatActivity {
                                 DocumentSnapshot document = task.getResult();
                                 if (document.exists()) {
                                     String userName = document.getString("name");
-                                    welcomeText.setText("Welcome, " + userName);
+                                    nameTextView.setText(userName);
                                 } else {
-                                    Toast.makeText(ProgressTrackingActivity.this, "No such document", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ProgressTrackingActivity.this, "No such document",
+                                            Toast.LENGTH_SHORT).show();
                                 }
                             } else {
-                                Toast.makeText(ProgressTrackingActivity.this, "get failed with " + task.getException(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ProgressTrackingActivity.this, "get failed with " + task.getException(),
+                                        Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
 
-// Fetch user debts.
-            db.collection("userDebts")
+            // Fetch user debts.
+            db.collection("debts")
                     .whereEqualTo("uid", currentUser.getUid())
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -85,26 +98,36 @@ public class ProgressTrackingActivity extends AppCompatActivity {
                                     double amountOf = Double.parseDouble(amountOfStr);
                                     String rate = document.getString("rate");
                                     String frequency = document.getString("frequency");
-                                    String type = document.getString("type");
                                     String dateOfNextPayment = document.getString("dateOfNextPayment");
                                     String uid = document.getString("uid");
 
-                                    Debt debt = new Debt(nameOf, amountOfStr, rate, frequency, type, dateOfNextPayment, uid);
+                                    Debt debt = new Debt(document.getReference(), nameOf, amountOfStr, rate, frequency,
+                                            dateOfNextPayment, uid);
                                     debts.add(debt);
                                     totalDebt += amountOf;
                                 }
 
-                                debtInfoTextView.setText("Total debt: " + totalDebt);
+                                DebtAdapter adapter = new DebtAdapter(ProgressTrackingActivity.this, debts);
+                                debtListView.setAdapter(adapter);
 
+                                String debtInfoText = "You have <b>" + debts.size() + " debt"
+                                        + (debts.size() != 1 ? "s" : "") + "</b> with a total of <b>$" + totalDebt
+                                        + "</b>.";
+
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    debtInfoTextView.setText(Html.fromHtml(debtInfoText, Html.FROM_HTML_MODE_LEGACY));
+                                } else {
+                                    debtInfoTextView.setText(Html.fromHtml(debtInfoText));
+                                }
                             } else {
                                 Log.d(TAG, "Error getting documents: ", task.getException());
                             }
                         }
                     });
-            // Fetch user income.
-            db.collection("userDebts")
+
+            // Fetch user incomes.
+            db.collection("incomes")
                     .whereEqualTo("uid", currentUser.getUid())
-                    .whereEqualTo("type", "income")
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -117,50 +140,48 @@ public class ProgressTrackingActivity extends AppCompatActivity {
                                     String amountOfStr = document.getString("amountOf");
                                     double amountOf = Double.parseDouble(amountOfStr);
                                     String frequency = document.getString("frequency");
-                                    String type = document.getString("type");
                                     String dateOfNextPayment = document.getString("dateOfNextPayment");
                                     String uid = document.getString("uid");
 
-                                    Income income = new Income(nameOf, amountOfStr, frequency, type, dateOfNextPayment, uid);
+                                    Income income = new Income(document.getReference(), nameOf, amountOfStr, frequency,
+                                            dateOfNextPayment, uid);
                                     incomes.add(income);
                                     totalIncome += amountOf;
                                 }
 
-                                incomeInfoTextView.setText("Total income: " + totalIncome);
+                                IncomeAdapter adapter = new IncomeAdapter(ProgressTrackingActivity.this, incomes);
+                                incomeListView.setAdapter(adapter);
+
+                                String incomeInfoText = "Your total income is <b>$" + totalIncome + "</b>.";
+
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    incomeInfoTextView
+                                            .setText(Html.fromHtml(incomeInfoText, Html.FROM_HTML_MODE_LEGACY));
+                                } else {
+                                    incomeInfoTextView.setText(Html.fromHtml(incomeInfoText));
+                                }
 
                             } else {
                                 Log.d(TAG, "Error getting documents: ", task.getException());
                             }
                         }
                     });
-
-
-            // Set onClickListener for debtInfoTextView
-            debtInfoTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Perform your action here
-                    // For example, start a new activity
-                    Intent intent = new Intent(ProgressTrackingActivity.this, DebtDetailsActivity.class);
-                    startActivity(intent);
-                }
-            });
-            incomeInfoTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Perform your action here
-                    // For example, start a new activity
-                    Intent intent = new Intent(ProgressTrackingActivity.this, IncomeDetailsActivity.class);
-                    startActivity(intent);
-                }
-            });
-
         }
 
-        buttonRegister.setOnClickListener(new View.OnClickListener() {
+        // Click events for debt and income add buttons.
+
+        debtAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ProgressTrackingActivity.this, DebtInventoryActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        incomeAddButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProgressTrackingActivity.this, IncomeInventoryActivity.class);
                 startActivity(intent);
             }
         });

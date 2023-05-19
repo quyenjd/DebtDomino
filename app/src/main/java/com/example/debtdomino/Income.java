@@ -1,36 +1,39 @@
 package com.example.debtdomino;
 
+import com.google.firebase.firestore.DocumentReference;
+import java.util.concurrent.CompletableFuture;
+
 public class Income {
-    private String name;
-    private String amount;
+    private DocumentReference documentRef;
+    private String nameOf;
+    private String amountOf;
     private String frequency;
-    private String type;
     private String dateOfNextPayment;
     private String uid;
 
-    public Income(String name, String amount, String frequency, String type, String dateOfNextPayment, String uid) {
-        this.name = name;
-        this.amount = amount;
+    public Income(DocumentReference documentRef, String nameOf, String amountOf, String frequency, String dateOfNextPayment, String uid) {
+        this.documentRef = documentRef;
+        this.nameOf = nameOf;
+        this.amountOf = amountOf;
         this.frequency = frequency;
-        this.type = type;
         this.dateOfNextPayment = dateOfNextPayment;
         this.uid = uid;
     }
 
-    public String getName() {
-        return name;
+    public String getNameOf() {
+        return nameOf;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNameOf(String nameOf) {
+        this.nameOf = nameOf;
     }
 
-    public String getAmount() {
-        return amount;
+    public String getAmountOf() {
+        return amountOf;
     }
 
-    public void setAmount(String amount) {
-        this.amount = amount;
+    public void setAmountOf(String amountOf) {
+        this.amountOf = amountOf;
     }
 
     public String getFrequency() {
@@ -39,14 +42,6 @@ public class Income {
 
     public void setFrequency(String frequency) {
         this.frequency = frequency;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getDateOfNextPayment() {
@@ -63,5 +58,19 @@ public class Income {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public CompletableFuture<Boolean> removeSelf() {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+
+        documentRef.delete().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                future.complete(true);
+            } else {
+                future.complete(false);
+            }
+        });
+
+        return future;
     }
 }

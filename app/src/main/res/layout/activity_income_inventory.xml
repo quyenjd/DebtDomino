@@ -12,48 +12,41 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/textViewDebt"
+            android:id="@+id/textViewIncome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
-            android:text="Debt"
+            android:text="Income"
             android:textSize="18sp"
             android:textStyle="bold" />
 
         <LinearLayout
-            android:id="@+id/debtLayout"
+            android:id="@+id/incomeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/editTextDebtName"
+                android:id="@+id/editTextIncomeName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Name of Debt" />
+                android:hint="Name of Income" />
 
             <EditText
-                android:id="@+id/editTextDebtAmount"
+                android:id="@+id/editTextIncomeAmount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Amount of Debt"
-                android:inputType="numberDecimal" />
-
-            <EditText
-                android:id="@+id/editTextDebtRate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Rate (%)"
+                android:hint="Amount of Income"
                 android:inputType="numberDecimal" />
 
             <Spinner
-                android:id="@+id/spinnerDebtFrequency"
+                android:id="@+id/spinnerIncomeFrequency"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:entries="@array/debt_frequency_array" />
+                android:entries="@array/income_frequency_array" />
 
             <EditText
-                android:id="@+id/debtTextNextPaymentDate"
+                android:id="@+id/incomeTextNextPaymentDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Next Payment Date"
