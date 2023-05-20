@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Debt Domino</string>
     <string name="select_debt_prompt">Select Debt</string>
+    <string name="select_method_prompt">Select a repayment method</string>
+        <string-array name="debt_repayment_methods">
+            <item>Avalanche</item>
+            <item>Snowball</item>
+        </string-array>
+
 </resources>

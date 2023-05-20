@@ -49,6 +49,7 @@ public class ProgressTrackingActivity extends AppCompatActivity {
     private Button logoutButton;
     private Button updateProfileButton;
     private Button setupPaymentPlanButton;
+    private Button paymentPlanListButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +71,7 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         logoutButton = findViewById(R.id.logout_button);
         updateProfileButton = findViewById(R.id.update_profile_button);
         setupPaymentPlanButton = findViewById(R.id.setup_payment_plan_button);
+        paymentPlanListButton = findViewById(R.id.view_payment_plans);
 
         // Fetch user data
         db.collection("users").document(currentUser.getUid())
@@ -243,6 +245,13 @@ public class ProgressTrackingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ProgressTrackingActivity.this, PaymentPlan.class);
+                startActivity(intent);
+            }
+        });
+        paymentPlanListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProgressTrackingActivity.this, PaymentPlanList.class);
                 startActivity(intent);
             }
         });
