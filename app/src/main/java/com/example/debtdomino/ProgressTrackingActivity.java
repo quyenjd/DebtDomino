@@ -3,18 +3,19 @@ package com.example.debtdomino;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.text.Html;
-import android.os.Build;
+
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import android.content.DialogInterface;
+
 import android.app.AlertDialog;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,13 +23,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import android.view.MenuItem;
-import android.content.Intent;
 
 public class ProgressTrackingActivity extends AppCompatActivity {
     private static final String TAG = "ProgressTrackingActivity";
@@ -44,10 +48,10 @@ public class ProgressTrackingActivity extends AppCompatActivity {
     private Button incomeAddButton;
     private Button logoutButton;
     private Button updateProfileButton;
+    private Button setupPaymentPlanButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_progress_tracking);
 
@@ -65,120 +69,121 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         incomeAddButton = findViewById(R.id.income_add_button);
         logoutButton = findViewById(R.id.logout_button);
         updateProfileButton = findViewById(R.id.update_profile_button);
+        setupPaymentPlanButton = findViewById(R.id.setup_payment_plan_button);
 
-        if (currentUser != null) {
-            db.collection("users")
-                    .document(currentUser.getUid())
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot document = task.getResult();
-                                if (document.exists()) {
-                                    String userName = document.getString("name");
-                                    nameTextView.setText(userName);
-                                } else {
-                                    Toast.makeText(ProgressTrackingActivity.this, "No such document",
-                                            Toast.LENGTH_SHORT).show();
-                                }
+        // Fetch user data
+        db.collection("users").document(currentUser.getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                String userName = document.getString("name");
+                                nameTextView.setText(userName);
                             } else {
-                                Toast.makeText(ProgressTrackingActivity.this, "get failed with " + task.getException(),
-                                        Toast.LENGTH_SHORT).show();
+                                Log.d(TAG, "No such document");
+                            }
+                        } else {
+                            Log.d(TAG, "get failed with ", task.getException());
+                        }
+                    }
+                });
+
+        // Fetch user debts.
+        db.collection("debts")
+                .whereEqualTo("uid", currentUser.getUid())
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot snapshots,
+                                        @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
+
+                        List<Debt> debts = new ArrayList<>();
+                        double totalDebt = 0;
+
+                        for (QueryDocumentSnapshot doc : snapshots) {
+                            if (doc != null) {
+                                String nameOf = doc.getString("nameOf");
+                                String amountOfStr = doc.getString("amountOf");
+                                double amountOf = Double.parseDouble(amountOfStr);
+                                String rate = doc.getString("rate");
+                                String frequency = doc.getString("frequency");
+                                String dateOfNextPayment = doc.getString("dateOfNextPayment");
+                                String uid = doc.getString("uid");
+
+                                Debt debt = new Debt(doc.getReference(), nameOf, amountOfStr, rate, frequency,
+                                        dateOfNextPayment, uid);
+                                debts.add(debt);
+                                totalDebt += amountOf;
                             }
                         }
-                    });
 
-            // Fetch user debts.
-            db.collection("debts")
-                    .whereEqualTo("uid", currentUser.getUid())
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                List<Debt> debts = new ArrayList<>();
-                                double totalDebt = 0;
-                                for (DocumentSnapshot document : task.getResult()) {
-                                    String nameOf = document.getString("nameOf");
-                                    String amountOfStr = document.getString("amountOf");
-                                    double amountOf = Double.parseDouble(amountOfStr);
-                                    String rate = document.getString("rate");
-                                    String frequency = document.getString("frequency");
-                                    String dateOfNextPayment = document.getString("dateOfNextPayment");
-                                    String uid = document.getString("uid");
+                        DebtAdapter adapter = new DebtAdapter(ProgressTrackingActivity.this, debts);
+                        debtListView.setAdapter(adapter);
 
-                                    Debt debt = new Debt(document.getReference(), nameOf, amountOfStr, rate, frequency,
-                                            dateOfNextPayment, uid);
-                                    debts.add(debt);
-                                    totalDebt += amountOf;
-                                }
+                        String debtInfoText = "You have <b>" + debts.size() + " debt"
+                                + (debts.size() != 1 ? "s" : "") + "</b> with a total of <b>$" + totalDebt
+                                + "</b>.";
 
-                                DebtAdapter adapter = new DebtAdapter(ProgressTrackingActivity.this, debts);
-                                debtListView.setAdapter(adapter);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            debtInfoTextView.setText(Html.fromHtml(debtInfoText, Html.FROM_HTML_MODE_LEGACY));
+                        } else {
+                            debtInfoTextView.setText(Html.fromHtml(debtInfoText));
+                        }
+                    }
+                });
 
-                                String debtInfoText = "You have <b>" + debts.size() + " debt"
-                                        + (debts.size() != 1 ? "s" : "") + "</b> with a total of <b>$" + totalDebt
-                                        + "</b>.";
+        // Fetch user incomes.
+        db.collection("incomes")
+                .whereEqualTo("uid", currentUser.getUid())
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot snapshots,
+                                        @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
 
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                    debtInfoTextView.setText(Html.fromHtml(debtInfoText, Html.FROM_HTML_MODE_LEGACY));
-                                } else {
-                                    debtInfoTextView.setText(Html.fromHtml(debtInfoText));
-                                }
-                            } else {
-                                Log.d(TAG, "Error getting documents: ", task.getException());
+                        List<Income> incomes = new ArrayList<>();
+                        double totalIncome = 0;
+
+                        for (QueryDocumentSnapshot doc : snapshots) {
+                            if (doc != null) {
+                                String nameOf = doc.getString("nameOf");
+                                String amountOfStr = doc.getString("amountOf");
+                                double amountOf = Double.parseDouble(amountOfStr);
+                                String frequency = doc.getString("frequency");
+                                String dateOfNextPayment = doc.getString("dateOfNextPayment");
+                                String uid = doc.getString("uid");
+
+                                Income income = new Income(doc.getReference(), nameOf, amountOfStr, frequency,
+                                        dateOfNextPayment, uid);
+                                incomes.add(income);
+                                totalIncome += amountOf;
                             }
                         }
-                    });
 
-            // Fetch user incomes.
-            db.collection("incomes")
-                    .whereEqualTo("uid", currentUser.getUid())
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                List<Income> incomes = new ArrayList<>();
-                                double totalIncome = 0;
-                                for (DocumentSnapshot document : task.getResult()) {
-                                    String nameOf = document.getString("nameOf");
-                                    String amountOfStr = document.getString("amountOf");
-                                    double amountOf = Double.parseDouble(amountOfStr);
-                                    String frequency = document.getString("frequency");
-                                    String dateOfNextPayment = document.getString("dateOfNextPayment");
-                                    String uid = document.getString("uid");
+                        IncomeAdapter adapter = new IncomeAdapter(ProgressTrackingActivity.this, incomes);
+                        incomeListView.setAdapter(adapter);
 
-                                    Income income = new Income(document.getReference(), nameOf, amountOfStr, frequency,
-                                            dateOfNextPayment, uid);
-                                    incomes.add(income);
-                                    totalIncome += amountOf;
-                                }
+                        String incomeInfoText = "Your total income is <b>$" + totalIncome + "</b>.";
 
-                                IncomeAdapter adapter = new IncomeAdapter(ProgressTrackingActivity.this, incomes);
-                                incomeListView.setAdapter(adapter);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            incomeInfoTextView.setText(Html.fromHtml(incomeInfoText, Html.FROM_HTML_MODE_LEGACY));
 
-                                String incomeInfoText = "Your total income is <b>$" + totalIncome + "</b>.";
-
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                    incomeInfoTextView
-                                            .setText(Html.fromHtml(incomeInfoText, Html.FROM_HTML_MODE_LEGACY));
-                                } else {
-                                    incomeInfoTextView.setText(Html.fromHtml(incomeInfoText));
-                                }
-
-                            } else {
-                                Log.d(TAG, "Error getting documents: ", task.getException());
-                            }
+                        } else {
+                            incomeInfoTextView.setText(Html.fromHtml(incomeInfoText));
                         }
-                    });
-        } else {
-            onBackPressed();
-        }
+                    }
+                });
 
         // Click events for debt and income add buttons.
-
         debtAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -196,7 +201,6 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         });
 
         // Click events for update profile and logout buttons
-
         updateProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -233,6 +237,14 @@ public class ProgressTrackingActivity extends AppCompatActivity {
                 dialog.show();
             }
         });
-    }
 
+        // Click event for setup payment plan button
+        setupPaymentPlanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProgressTrackingActivity.this, PaymentPlan.class);
+                startActivity(intent);
+            }
+        });
+    }
 }

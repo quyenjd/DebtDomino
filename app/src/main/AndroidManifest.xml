@@ -30,6 +30,7 @@
         <activity android:name=".DebtInventoryActivity" />
         <activity android:name=".IncomeInventoryActivity" />
         <activity android:name=".ProfileActivity" />
+        <activity android:name=".PaymentPlan" />
     </application>
 
 </manifest>

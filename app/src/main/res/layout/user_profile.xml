@@ -67,6 +67,16 @@
             <LinearLayout android:orientation="vertical" android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:layout_marginTop="32dp">
 
+                <TextView
+                    android:id="@+id/editFormPasswordNote"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Leave the following fields blank unless you want to change your password."
+                    android:textSize="14sp"
+                    android:textStyle="italic"
+                    android:gravity="center"
+                    android:paddingBottom="16dp" />
+
                 <EditText
                     android:id="@+id/editTextCurrentPassword"
                     android:layout_width="match_parent"
@@ -79,7 +89,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
-                    android:hint="Password" />
+                    android:hint="New Password" />
 
                 <EditText
                     android:id="@+id/editTextConfirmPassword"

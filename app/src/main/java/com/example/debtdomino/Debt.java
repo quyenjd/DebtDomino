@@ -12,6 +12,10 @@ public class Debt {
     private String dateOfNextPayment;
     private String uid;
 
+    public Debt() {
+        // Default constructor required for Firestore deserialisation
+    }
+
     public Debt(DocumentReference documentRef, String nameOf, String amountOf, String rate, String frequency, String dateOfNextPayment, String uid) {
         this.documentRef = documentRef;
         this.nameOf = nameOf;

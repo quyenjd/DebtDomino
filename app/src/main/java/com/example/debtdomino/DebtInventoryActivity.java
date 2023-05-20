@@ -76,6 +76,8 @@ public class DebtInventoryActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
     }
 
     public void showDatePickerDialog(final View v) {

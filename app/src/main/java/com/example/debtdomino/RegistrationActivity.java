@@ -78,6 +78,7 @@ public class RegistrationActivity extends AppCompatActivity {
         editTextCurrentPassword.setVisibility(View.GONE);
         editFormButton.setText("Register");
 
+
         editFormButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -56,7 +56,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.user_registration);
+        setContentView(R.layout.user_profile);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
