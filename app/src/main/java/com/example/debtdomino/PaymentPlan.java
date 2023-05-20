@@ -5,8 +5,10 @@ import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -16,9 +18,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -28,7 +33,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PaymentPlan extends AppCompatActivity {
     private FirebaseFirestore db;
@@ -40,10 +47,15 @@ public class PaymentPlan extends AppCompatActivity {
     private TextView paymentAmountInput;
     private SimpleDateFormat dateFormatter;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.payment_plan_layout);
+
+        // Set up the back button in the action bar
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -54,6 +66,7 @@ public class PaymentPlan extends AppCompatActivity {
         paymentAmountInput = findViewById(R.id.payment_amount_input);
 
         dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+
 
         // Fetch user debts.
         db.collection("debts")
@@ -135,6 +148,7 @@ public class PaymentPlan extends AppCompatActivity {
                                         String frequency = debt.getFrequency();
 
                                         List<String> installmentList = generateInstallmentList(totalAmount, rate, frequency, finalStartDate, finalPaymentAmount);
+                                        createPaymentPlanInFirestore(selectedDebt, totalAmount, rate, frequency, finalStartDate, finalPaymentAmount, installmentList);
 
                                         String installmentListStr = String.join("\n", installmentList);
                                         installmentListTextView.setText(installmentListStr);
@@ -147,7 +161,17 @@ public class PaymentPlan extends AppCompatActivity {
             }
         });
     }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            // Respond to the action bar's Up/Home button
+            Intent intent = new Intent(this, ProgressTrackingActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
 
+        return super.onOptionsItemSelected(item);
+    }
     private void showDatePickerDialog(TextView dateInput) {
         Calendar calendar = Calendar.getInstance();
         DatePickerDialog datePickerDialog = new DatePickerDialog(
@@ -172,6 +196,7 @@ public class PaymentPlan extends AppCompatActivity {
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(startDate);
+        int installments = 0;
 
         while (remainingAmount > 0) {
             double interest = computeInterest(remainingAmount, rate, frequency); // Calculate interest based on frequency
@@ -183,12 +208,16 @@ public class PaymentPlan extends AppCompatActivity {
             installmentList.add(installment);
 
             advanceCalendar(frequency, calendar); // Advance calendar based on frequency
+            installments++;
         }
 
         String totalPaidString = "Total Paid: $" + decimalFormat.format(totalPaid);
         installmentList.add(totalPaidString);
+        String durationString = "Duration of Payment Plan: " + installments + " " + frequency + (installments > 1 ? "s" : "");
+        installmentList.add(durationString);
 
         return installmentList;
+
     }
 
     private void advanceCalendar(String frequency, Calendar calendar) {
@@ -214,5 +243,37 @@ public class PaymentPlan extends AppCompatActivity {
             default: // assume monthly by default
                 return remainingAmount * (rate / 100) / 12;
         }
+    }
+    private void createPaymentPlanInFirestore(String selectedDebt, double totalAmount, double rate, String frequency, Date startDate, double paymentAmount, List<String> installmentList) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Get a reference to the payment plans collection
+        CollectionReference paymentPlansCollection = db.collection("paymentPlans");
+
+        // Create a new payment plan document
+        Map<String, Object> planData = new HashMap<>();
+        planData.put("uid", currentUser.getUid());
+        planData.put("debtId", selectedDebt);  // using the debt name as id, you might want to use the actual id
+        planData.put("startDate", startDate);
+        planData.put("paymentAmount", paymentAmount);
+        planData.put("totalAmount", totalAmount);
+        planData.put("rate", rate);
+        planData.put("frequency", frequency);
+
+        paymentPlansCollection.add(planData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                // Get a reference to the installments sub-collection
+                CollectionReference installmentsCollection = documentReference.collection("installments");
+
+                for (String installment : installmentList) {
+                    // Create a new installment document
+                    Map<String, Object> installmentData = new HashMap<>();
+                    installmentData.put("installment", installment);
+
+                    installmentsCollection.add(installmentData);
+                }
+            }
+        });
     }
 }
