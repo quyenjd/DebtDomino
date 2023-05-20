@@ -1,5 +1,6 @@
 package com.example.debtdomino;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -45,6 +46,19 @@ public class PaymentPlanList extends AppCompatActivity implements PaymentPlanAda
         paymentPlansListView.setAdapter(adapter);
 
         fetchPaymentPlans();
+
+        paymentPlansListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selectedPlanDetails = adapter.getItem(position);
+                String selectedPlanName = selectedPlanDetails.split("\n")[0].substring(6); // Extract the plan name from the plan details
+
+                Intent intent = new Intent(PaymentPlanList.this, PaymentPlanDetailsActivity.class);
+                intent.putExtra("debtId", selectedPlanName);
+                startActivity(intent);
+            }
+        });
+
     }
 
 
