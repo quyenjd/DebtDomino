@@ -3,6 +3,7 @@
     <string-array name="frequency_options">
         <item>Weekly</item>
         <item>Fortnightly</item>
+        <item>Monthly</item>
         <item>Quarterly</item>
     </string-array>
 

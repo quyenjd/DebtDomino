@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         if (mAuth.getCurrentUser() != null) {
             Intent intent = new Intent(MainActivity.this, ProgressTrackingActivity.class);
             startActivity(intent);
+            finish();
         }
 
         usernameEditText = findViewById(R.id.username_edit_text);
@@ -63,9 +64,11 @@ public class MainActivity extends AppCompatActivity {
                                     // Sign in success, update UI with the signed-in user's information
                                     Intent intent = new Intent(MainActivity.this, ProgressTrackingActivity.class);
                                     startActivity(intent);
+                                    finish();
                                 } else {
                                     // If sign in fails, display a message to the user.
-                                    Toast.makeText(MainActivity.this, "Authentication failed: " + task.getException().getMessage(),
+                                    Toast.makeText(MainActivity.this,
+                                            "Authentication failed: " + task.getException().getMessage(),
                                             Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -85,7 +88,8 @@ public class MainActivity extends AppCompatActivity {
 
     // Method to hide the keyboard
     public void hideKeyboard(View view) {
-        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(MainActivity.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(
+                MainActivity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

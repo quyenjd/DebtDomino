@@ -55,6 +55,20 @@
                 android:clickable="true"
                 android:onClick="showDatePickerDialog" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="What is the income cycle?"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                android:layout_marginTop="16dp" />
+
+            <Spinner
+                android:id="@+id/spinnerIncomeFrequency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/frequency_options" />
+
         </LinearLayout>
 
         <Button

@@ -39,7 +39,7 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.DebtViewHolder
     public void onBindViewHolder(@NonNull DebtViewHolder holder, int position) {
         Debt debt = data.get(position);
         holder.debtName.setText(debt.getNameOf());
-        holder.debtAmount.setText(debt.getAmountOf());
+        holder.debtAmount.setText(debt.getAmountOf() + " " + debt.getFrequency());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Confirmation");
@@ -50,13 +50,14 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.DebtViewHolder
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 debt.removeSelf().thenAccept(success -> {
-                    Toast.makeText(context, success ? "Debt removed successfully" : "Failed to remove debt", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, success ? "Debt removed successfully" : "Failed to remove debt",
+                            Toast.LENGTH_SHORT).show();
                     data.remove(position);
                     notifyDataSetChanged();
                 });
             }
         });
-        
+
         // Set negative button
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
@@ -72,6 +73,7 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.DebtViewHolder
             }
         });
     }
+
     @Override
     public int getItemCount() {
         return data.size();
@@ -95,5 +97,3 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.DebtViewHolder
         }
     }
 }
-
-

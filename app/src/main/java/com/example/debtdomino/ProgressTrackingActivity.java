@@ -99,7 +99,7 @@ public class ProgressTrackingActivity extends AppCompatActivity {
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot snapshots,
-                                        @Nullable FirebaseFirestoreException e) {
+                            @Nullable FirebaseFirestoreException e) {
                         if (e != null) {
                             Log.w(TAG, "Listen failed.", e);
                             return;
@@ -146,7 +146,7 @@ public class ProgressTrackingActivity extends AppCompatActivity {
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot snapshots,
-                                        @Nullable FirebaseFirestoreException e) {
+                            @Nullable FirebaseFirestoreException e) {
                         if (e != null) {
                             Log.w(TAG, "Listen failed.", e);
                             return;
@@ -244,14 +244,15 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         setupPaymentPlanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ProgressTrackingActivity.this, PaymentPlan.class);
+                Intent intent = new Intent(ProgressTrackingActivity.this, PaymentPlanFormActivity.class);
                 startActivity(intent);
             }
         });
+
         paymentPlanListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ProgressTrackingActivity.this, PaymentPlanList.class);
+                Intent intent = new Intent(ProgressTrackingActivity.this, PaymentPlanDetailsActivity.class);
                 startActivity(intent);
             }
         });

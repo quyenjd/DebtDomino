@@ -29,12 +29,9 @@ public class RegistrationActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
-    private TextView editFormTitle, editFormPasswordNote;
-    private EditText editTextName, editTextEmail, editTextCurrentPassword, editTextPassword, editTextConfirmPassword,
-            editTextPhoneNumber;
-    private Spinner editSpinnerPayoffMethod;
+    private TextView editFormTitle;
+    private EditText editTextName, editTextEmail, editTextPassword, editTextConfirmPassword, editTextPhoneNumber;
     private Button editFormButton;
-    private ProgressBar progressBar;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -60,24 +57,12 @@ public class RegistrationActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         editFormTitle = findViewById(R.id.editFormTitle);
-        editFormPasswordNote = findViewById(R.id.editFormPasswordNote);
         editTextName = findViewById(R.id.editTextName);
         editTextEmail = findViewById(R.id.editTextEmail);
-        editTextCurrentPassword = findViewById(R.id.editTextCurrentPassword);
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
         editTextPhoneNumber = findViewById(R.id.editTextPhoneNumber);
-        editSpinnerPayoffMethod = findViewById(R.id.editSpinnerPayoffMethod);
         editFormButton = findViewById(R.id.editFormButton);
-        progressBar = findViewById(R.id.progressBar);
-
-        progressBar.setVisibility(View.GONE);
-
-        editFormTitle.setText("Registration");
-        editFormPasswordNote.setVisibility(View.GONE);
-        editTextCurrentPassword.setVisibility(View.GONE);
-        editFormButton.setText("Register");
-
 
         editFormButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,7 +70,6 @@ public class RegistrationActivity extends AppCompatActivity {
                 final String name = editTextName.getText().toString();
                 final String email = editTextEmail.getText().toString();
                 final String phoneNumber = editTextPhoneNumber.getText().toString();
-                final String debtPayoffMethod = editSpinnerPayoffMethod.getSelectedItem().toString();
                 String password = editTextPassword.getText().toString();
                 String confirmPassword = editTextConfirmPassword.getText().toString();
 
@@ -101,7 +85,6 @@ public class RegistrationActivity extends AppCompatActivity {
                                         userMap.put("name", name);
                                         userMap.put("email", email);
                                         userMap.put("phone_number", phoneNumber);
-                                        userMap.put("payoff_method", debtPayoffMethod);
 
                                         db.collection("users").document(user.getUid())
                                                 .set(userMap)

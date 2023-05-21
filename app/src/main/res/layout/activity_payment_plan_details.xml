@@ -5,36 +5,19 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/plan_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:paddingBottom="8dp"
-        android:text="Plan Name"/>
+    <TextView android:id="@+id/no_plan_found_text" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:gravity="center" android:text="No plan found."
+        android:padding="16dp" />
 
-    <TextView
-        android:id="@+id/total_amount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:paddingBottom="8dp"
-        android:text="Total Amount"/>
+    <TextView android:id="@+id/generated_at_text" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="No plan found."
+        android:layout_marginBottom="16dp" android:textStyle="italic" />
 
-    <TextView
-        android:id="@+id/start_date"
+    <ListView
+        android:id="@+id/payment_plan_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:paddingBottom="8dp"
-        android:text="Start Date"/>
-
-    <TextView
-        android:id="@+id/end_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="End Date"/>
+        android:layout_height="match_parent"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp" />
 
 </LinearLayout>

@@ -20,7 +20,7 @@
                 android:id="@+id/editFormTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Registration"
+                android:text="Edit Profile"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -46,23 +46,6 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
                 android:hint="Phone Number" />
-
-            <TextView
-                android:id="@+id/editFormPasswordNote"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Choose how you prefer to pay off your debts:"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:paddingTop="16dp"
-                android:paddingBottom="8dp" />
-
-            <Spinner
-                android:id="@+id/editSpinnerPayoffMethod"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:entries="@array/debt_payoff_methods" />
 
             <LinearLayout android:orientation="vertical" android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:layout_marginTop="32dp">

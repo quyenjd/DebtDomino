@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="text">#FFFFFFFF</color>
+  <color name="textInvert">#FF000000</color>
+  <color name="bgElevate">#FF222222</color>
+  <color name="bgElevate2">#FF333333</color>
+</resources>
