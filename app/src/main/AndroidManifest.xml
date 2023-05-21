@@ -32,7 +32,6 @@
         <activity android:name=".ProfileActivity" />
         <activity android:name=".PaymentPlanFormActivity" />
         <activity android:name=".PaymentPlanDetailsActivity" />
-        <activity android:name=".PaymentPlanDetailsActivity" />
         <service
             android:name=".NotificationsUtils"
             android:exported="false">
