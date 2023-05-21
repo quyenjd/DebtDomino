@@ -5,6 +5,15 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <TextView
+        android:id="@+id/title_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Installment List"
+        android:textSize="24sp"
+        android:padding="8dp"
+        android:textAlignment="center"/>
+
     <ListView
         android:id="@+id/installment_list"
         android:layout_width="match_parent"
