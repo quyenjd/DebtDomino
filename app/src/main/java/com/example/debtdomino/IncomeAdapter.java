@@ -39,7 +39,7 @@ public class IncomeAdapter extends RecyclerView.Adapter<IncomeAdapter.IncomeView
     public void onBindViewHolder(@NonNull IncomeViewHolder holder, int position) {
         Income income = data.get(position);
         holder.incomeName.setText(income.getNameOf());
-        holder.incomeAmount.setText(income.getAmountOf() + " " + income.getFrequency());
+        holder.incomeAmount.setText(income.getAmountOf());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Confirmation");
@@ -50,14 +50,13 @@ public class IncomeAdapter extends RecyclerView.Adapter<IncomeAdapter.IncomeView
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 income.removeSelf().thenAccept(success -> {
-                    Toast.makeText(context, success ? "Income removed successfully" : "Failed to remove income",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, success ? "Income removed successfully" : "Failed to remove income", Toast.LENGTH_SHORT).show();
                     data.remove(position);
                     notifyDataSetChanged();
                 });
             }
         });
-
+        
         // Set negative button
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
@@ -73,7 +72,6 @@ public class IncomeAdapter extends RecyclerView.Adapter<IncomeAdapter.IncomeView
             }
         });
     }
-
     @Override
     public int getItemCount() {
         return data.size();
@@ -97,3 +95,6 @@ public class IncomeAdapter extends RecyclerView.Adapter<IncomeAdapter.IncomeView
         }
     }
 }
+
+
+

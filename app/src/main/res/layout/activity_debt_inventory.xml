@@ -46,6 +46,12 @@
                 android:hint="Rate (%)"
                 android:inputType="numberDecimal" />
 
+            <Spinner
+                android:id="@+id/spinnerDebtFrequency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/frequency_options" />
+
             <EditText
                 android:id="@+id/debtTextNextPaymentDate"
                 android:layout_width="match_parent"
@@ -55,20 +61,6 @@
                 android:inputType="date"
                 android:clickable="true"
                 android:onClick="showDatePickerDialog" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="What is the debt cycle?"
-                android:textSize="16sp"
-                android:textStyle="italic"
-                android:layout_marginTop="16dp" />
-
-            <Spinner
-                android:id="@+id/spinnerDebtFrequency"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:entries="@array/frequency_options" />
 
         </LinearLayout>
 

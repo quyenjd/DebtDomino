@@ -1,106 +1,96 @@
 package com.example.debtdomino;
 
-import android.content.Intent;
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 
 public class PaymentPlanDetailsActivity extends AppCompatActivity {
 
-    private static final String TAG = "PaymentPlanDetailsActivity";
-
-    private TextView noPlanTextView;
-    private TextView generatedAtTextView;
-    private ListView paymentPlanListView;
-    private PaymentPlanAdapter adapter;
-    private FirebaseFirestore db;
+    private InstallmentAdapter mInstallmentAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_plan_details);
 
-        // Set up the back button in the action bar
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ListView installmentListView = findViewById(R.id.installment_list);
+        mInstallmentAdapter = new InstallmentAdapter(this, new ArrayList<>());
+        installmentListView.setAdapter(mInstallmentAdapter);
 
-        db = FirebaseFirestore.getInstance();
+        String debtId = getIntent().getStringExtra("debtId");
+        Log.d(TAG, "Received plan ID: " + debtId);
 
-        noPlanTextView = findViewById(R.id.no_plan_found_text);
-        generatedAtTextView = findViewById(R.id.generated_at_text);
-        paymentPlanListView = findViewById(R.id.payment_plan_list);
-
-        generatedAtTextView.setVisibility(View.GONE);
-
-        adapter = new PaymentPlanAdapter(this, new ArrayList<>());
-        paymentPlanListView.setAdapter(adapter);
-
-        fetchPaymentPlans();
-    }
-
-    private void fetchPaymentPlans() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        db.collection("plans").document(currentUser.getUid())
+        db.collection("paymentPlans").document(debtId).collection("installments")
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            if (task.getResult().getData() != null) {
-                                noPlanTextView.setVisibility(View.GONE);
-                                generatedAtTextView
-                                        .setText("Generated at: "
-                                                + formatDate((Timestamp) task.getResult().getData().get("createdAt"))
-                                                + ".");
-                                generatedAtTextView.setVisibility(View.VISIBLE);
-                                adapter.addAll((List<Map<String, Object>>) task.getResult().getData().get("plans"));
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
+
+                            ArrayList<Installment> installments = new ArrayList<>();
+
+                            for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                                try {
+                                    String dateString = (String) document.get("date");
+                                    if (dateString != null) {
+                                        DateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+                                        Date date = format.parse(dateString);
+
+                                        Double installmentValue = null;
+                                        Double interest = null;
+                                        try {
+                                            installmentValue = Double.parseDouble(document.get("installment").toString());
+                                            interest = Double.parseDouble(document.get("interest").toString());
+                                        } catch (NumberFormatException nfe) {
+                                            Log.e(TAG, "NumberFormatException: " + nfe.getMessage());
+                                        }
+
+                                        if (installmentValue != null && interest != null) {
+                                            Installment installment = new Installment(date, installmentValue, interest);
+                                            installments.add(installment);
+                                        }
+                                    }
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
                             }
+
+                            // Sort the installments by date
+                            Collections.sort(installments, new Comparator<Installment>() {
+                                public int compare(Installment o1, Installment o2) {
+                                    return o1.getDate().compareTo(o2.getDate());
+                                }
+                            });
+
+                            // Add all the installments to the adapter
+                            mInstallmentAdapter.addAll(installments);
                         } else {
-                            Log.d(TAG, "Error getting payment plans: ", task.getException());
+                            Log.d(TAG, "Error getting installments: ", task.getException());
                         }
                     }
                 });
     }
-
-    private String formatDate(Timestamp timestamp) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-        Date date = timestamp.toDate();
-        return formatter.format(date);
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            // Respond to the action bar's Up/Home button
-            Intent intent = new Intent(this, ProgressTrackingActivity.class);
-            startActivity(intent);
-            finish();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }
+

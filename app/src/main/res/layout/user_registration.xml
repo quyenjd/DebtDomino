@@ -47,8 +47,32 @@
                 android:inputType="textPersonName"
                 android:hint="Phone Number" />
 
+            <TextView
+                android:id="@+id/editFormPasswordNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Choose how you prefer to pay off your debts:"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp" />
+
+            <Spinner
+                android:id="@+id/editSpinnerPayoffMethod"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/debt_payoff_methods" />
+
             <LinearLayout android:orientation="vertical" android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:layout_marginTop="32dp">
+
+                <EditText
+                    android:id="@+id/editTextCurrentPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:hint="Current Password" />
 
                 <EditText
                     android:id="@+id/editTextPassword"
@@ -70,11 +94,18 @@
                 android:id="@+id/editFormButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Register"
+                android:text="Save"
                 android:layout_marginTop="16dp" />
 
         </LinearLayout>
 
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        style="@android:style/Widget.ProgressBar.Large" />
 
 </FrameLayout>

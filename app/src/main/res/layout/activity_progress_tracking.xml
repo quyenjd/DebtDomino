@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/header"
         android:layout_centerInParent="true"
-        android:background="@color/bgElevate2"
+        android:background="@android:color/darker_gray"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -53,12 +53,11 @@
             android:textSize="16sp" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/debt_add_button"
@@ -70,6 +69,7 @@
                 android:id="@+id/setup_payment_plan_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
                 android:text="Setup Payment Plan" />
         </LinearLayout>
     </LinearLayout>
@@ -80,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/debt_frame"
         android:layout_centerInParent="true"
-        android:background="@color/bgElevate"
+        android:background="@android:color/darker_gray"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -97,12 +97,11 @@
             android:textSize="16sp" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/income_add_button"
@@ -117,27 +116,35 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/income_frame"
         android:gravity="center"
-        android:orientation="vertical"
-        android:layout_marginTop="8dp">
-
-        <Button
-            android:id="@+id/view_payment_plans"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="View payment plan" />
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/update_profile_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:text="Update profile" />
+
+        <Button
+            android:id="@+id/view_payment_plans"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View Payment Plans"
+            android:layout_marginLeft="16dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/income_frame"
+        android:gravity="center"
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/logout_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Logout"
+            android:layout_marginTop="50dp"
             android:backgroundTint="@android:color/holo_red_dark" />
     </LinearLayout>
 

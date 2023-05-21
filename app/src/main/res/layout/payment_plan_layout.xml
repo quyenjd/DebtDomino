@@ -1,6 +1,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F5F5F5"
     android:padding="16dp">
 
     <LinearLayout
@@ -11,62 +12,60 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Choose how you want to pay all the debts:"
+            android:text="Select Debt Repayment Method"
             android:textSize="16sp"
+            android:textColor="#000000"
             android:layout_marginTop="16dp" />
 
         <Spinner
             android:id="@+id/debt_repayment_method_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@android:drawable/editbox_background"
             android:prompt="@string/select_method_prompt"
-            android:layout_marginBottom="8dp"
-            android:entries="@array/debt_payoff_methods" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="When do you want to start the plan?"
-            android:textSize="16sp"
-            android:layout_marginTop="16dp" />
+            android:layout_marginBottom="8dp"/>
 
         <EditText
             android:id="@+id/start_date_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter start date"
+            android:hint="Enter start date (dd/mm/yyyy)"
             android:focusable="false"
-            android:layout_marginBottom="8dp" />
+            android:background="@android:drawable/editbox_background"
+            android:layout_marginBottom="8dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="What is your current balance?"
+            android:text="How much can you afford to pay per interval?"
             android:textSize="16sp"
+            android:textColor="#000000"
             android:layout_marginTop="16dp" />
 
         <EditText
-            android:id="@+id/balance_input"
+            android:id="@+id/payment_amount_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
-            android:hint="Enter the amount you currently have"
-            android:layout_marginBottom="8dp" />
+            android:hint="Enter amount you can pay per interval"
+            android:background="@android:drawable/editbox_background"
+            android:layout_marginBottom="8dp"/>
 
         <Button
             android:id="@+id/calculate_payment_plan_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="#3F51B5"
+            android:background="#3F51B5"
             android:textColor="#FFFFFF"
             android:layout_marginTop="16dp"
-            android:text="Generate Payment Plan" />
+            android:text="Calculate and Save Payment Plan" />
 
         <TextView
             android:id="@+id/payment_plan_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
+            android:textColor="#000000"
             android:layout_marginTop="8dp" />
 
     </LinearLayout>
