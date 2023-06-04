@@ -2,8 +2,10 @@ package com.example.debtdomino;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -33,6 +35,9 @@ public class PaymentPlanDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_plan_details);
 
+        // Set up the back button in the action bar
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         ListView installmentListView = findViewById(R.id.installment_list);
         mInstallmentAdapter = new InstallmentAdapter(this, new ArrayList<>());
         installmentListView.setAdapter(mInstallmentAdapter);
@@ -61,7 +66,8 @@ public class PaymentPlanDetailsActivity extends AppCompatActivity {
                                         Double installmentValue = null;
                                         Double interest = null;
                                         try {
-                                            installmentValue = Double.parseDouble(document.get("installment").toString());
+                                            installmentValue = Double
+                                                    .parseDouble(document.get("installment").toString());
                                             interest = Double.parseDouble(document.get("interest").toString());
                                         } catch (NumberFormatException nfe) {
                                             Log.e(TAG, "NumberFormatException: " + nfe.getMessage());
@@ -92,5 +98,16 @@ public class PaymentPlanDetailsActivity extends AppCompatActivity {
                     }
                 });
     }
-}
 
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            // Respond to the action bar's Up/Home button
+            Intent intent = new Intent(this, ProgressTrackingActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+}

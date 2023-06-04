@@ -3,6 +3,7 @@ package com.example.debtdomino;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -39,6 +40,9 @@ public class PaymentPlanListActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.item_repayment_plan);
+
+        // Set up the back button in the action bar
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         db = FirebaseFirestore.getInstance();
         paymentPlansListView = findViewById(R.id.payment_plans_list);
@@ -155,5 +159,17 @@ public class PaymentPlanListActivity extends AppCompatActivity
     @Override
     public void onRemoveButtonClick(int position) {
         removePaymentPlan(position);
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            // Respond to the action bar's Up/Home button
+            Intent intent = new Intent(this, ProgressTrackingActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

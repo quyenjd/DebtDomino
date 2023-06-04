@@ -48,7 +48,7 @@
                 android:hint="Phone Number" />
 
             <TextView
-                android:id="@+id/editFormPasswordNote"
+                android:id="@+id/editFormPayoffMethodNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Choose how you prefer to pay off your debts:"
