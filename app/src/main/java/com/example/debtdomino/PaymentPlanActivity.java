@@ -40,7 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PaymentPlan extends AppCompatActivity {
+public class PaymentPlanActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
     private Spinner debtSpinner;
@@ -49,8 +49,6 @@ public class PaymentPlan extends AppCompatActivity {
     private TextView startDateInput;
     private TextView paymentAmountInput;
     private SimpleDateFormat dateFormatter;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +60,7 @@ public class PaymentPlan extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        Spinner debtRepaymentMethodSpinner;  // add this line
+        Spinner debtRepaymentMethodSpinner; // add this line
         calculateButton = findViewById(R.id.calculate_payment_plan_button);
         installmentListTextView = findViewById(R.id.payment_plan_info);
         startDateInput = findViewById(R.id.start_date_input);
@@ -76,7 +74,6 @@ public class PaymentPlan extends AppCompatActivity {
         methodAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         debtRepaymentMethodSpinner.setAdapter(methodAdapter);
 
-
         // Fetch user debts.
         db.collection("debts")
                 .whereEqualTo("uid", currentUser.getUid())
@@ -88,11 +85,11 @@ public class PaymentPlan extends AppCompatActivity {
                             List<String> debtNames = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Debt debt = document.toObject(Debt.class);
-                                debtNames.add(debt.getNameOf());  // assuming Debt class has a getNameOf method
+                                debtNames.add(debt.getNameOf()); // assuming Debt class has a getNameOf method
                             }
 
                             // Create an ArrayAdapter using the string array and a default spinner layout
-                            ArrayAdapter<String> adapter = new ArrayAdapter<>(PaymentPlan.this,
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(PaymentPlanActivity.this,
                                     android.R.layout.simple_spinner_item, debtNames);
 
                             // Specify the layout to use when the list of choices appears
@@ -120,7 +117,8 @@ public class PaymentPlan extends AppCompatActivity {
                 String paymentAmountStr = paymentAmountInput.getText().toString();
 
                 if (startDateStr.isEmpty() || paymentAmountStr.isEmpty()) {
-                    Toast.makeText(PaymentPlan.this, "Please enter all the required fields", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PaymentPlanActivity.this, "Please enter all the required fields", Toast.LENGTH_SHORT)
+                            .show();
                     return;
                 }
 
@@ -133,7 +131,7 @@ public class PaymentPlan extends AppCompatActivity {
                     paymentAmount = Double.parseDouble(paymentAmountStr);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(PaymentPlan.this, "Error parsing the inputs", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PaymentPlanActivity.this, "Error parsing the inputs", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -142,7 +140,7 @@ public class PaymentPlan extends AppCompatActivity {
                 double finalPaymentAmount = paymentAmount;
 
                 // Create an array to hold the modified value
-                final double[] modifiedPaymentAmount = {finalPaymentAmount};
+                final double[] modifiedPaymentAmount = { finalPaymentAmount };
 
                 db.collection("debts")
                         .whereEqualTo("uid", currentUser.getUid())
@@ -159,9 +157,14 @@ public class PaymentPlan extends AppCompatActivity {
 
                                     // Sort based on the selected method
                                     if (selectedMethod.equals("Avalanche")) {
-                                        Collections.sort(userDebts, (debt1, debt2) -> Double.compare(Double.parseDouble(debt2.getRate()), Double.parseDouble(debt1.getRate())));
-                                    } else {  // Assume Snowball if not Avalanche
-                                        Collections.sort(userDebts, (debt1, debt2) -> Double.compare(Double.parseDouble(debt1.getAmountOf()), Double.parseDouble(debt2.getAmountOf())));
+                                        Collections.sort(userDebts,
+                                                (debt1, debt2) -> Double.compare(Double.parseDouble(debt2.getRate()),
+                                                        Double.parseDouble(debt1.getRate())));
+                                    } else { // Assume Snowball if not Avalanche
+                                        Collections.sort(userDebts,
+                                                (debt1, debt2) -> Double.compare(
+                                                        Double.parseDouble(debt1.getAmountOf()),
+                                                        Double.parseDouble(debt2.getAmountOf())));
                                     }
 
                                     for (Debt debt : userDebts) {
@@ -169,8 +172,10 @@ public class PaymentPlan extends AppCompatActivity {
                                         double rate = Double.parseDouble(debt.getRate());
                                         String frequency = debt.getFrequency();
 
-                                        List<Map<String, Object>> installmentList = generateInstallmentList(totalAmount, rate, frequency, finalStartDate, modifiedPaymentAmount[0]);
-                                        createPaymentPlanInFirestore(debt.getNameOf(), totalAmount, rate, frequency, finalStartDate, modifiedPaymentAmount[0], installmentList);
+                                        List<Map<String, Object>> installmentList = generateInstallmentList(totalAmount,
+                                                rate, frequency, finalStartDate, modifiedPaymentAmount[0]);
+                                        createPaymentPlanInFirestore(debt.getNameOf(), totalAmount, rate, frequency,
+                                                finalStartDate, modifiedPaymentAmount[0], installmentList);
 
                                         // Update the payment amount for the next debt
                                         modifiedPaymentAmount[0] -= totalAmount;
@@ -186,8 +191,8 @@ public class PaymentPlan extends AppCompatActivity {
             }
         });
 
-
     }
+
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             // Respond to the action bar's Up/Home button
@@ -199,6 +204,7 @@ public class PaymentPlan extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
     private void showDatePickerDialog(TextView dateInput) {
         Calendar calendar = Calendar.getInstance();
         DatePickerDialog datePickerDialog = new DatePickerDialog(
@@ -210,10 +216,10 @@ public class PaymentPlan extends AppCompatActivity {
                 },
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-        );
+                calendar.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
+
     private void fetchPaymentPlan(String planId) {
         db.collection("paymentPlans").document(planId).collection("installments")
                 .get()
@@ -235,6 +241,7 @@ public class PaymentPlan extends AppCompatActivity {
                     }
                 });
     }
+
     private void displayInstallments(List<String> installments) {
         // Get a reference to the TextView
         TextView paymentPlanInfo = findViewById(R.id.payment_plan_info);
@@ -246,19 +253,20 @@ public class PaymentPlan extends AppCompatActivity {
         paymentPlanInfo.setText(installmentText);
     }
 
-
-    private List<Map<String, Object>> generateInstallmentList(double totalAmount, double rate, String frequency, Date startDate, double paymentAmount) {
+    private List<Map<String, Object>> generateInstallmentList(double totalAmount, double rate, String frequency,
+            Date startDate, double paymentAmount) {
         List<Map<String, Object>> installmentList = new ArrayList<>();
 
         double remainingAmount = totalAmount;
-        double totalPaid = 0.0;  // Track the total amount paid
+        double totalPaid = 0.0; // Track the total amount paid
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(startDate);
         int installments = 0;
 
         while (remainingAmount > 0) {
-            double interest = computeInterest(remainingAmount, rate, frequency); // Calculate interest based on frequency
+            double interest = computeInterest(remainingAmount, rate, frequency); // Calculate interest based on
+                                                                                 // frequency
             double currentInstallment = Math.min(paymentAmount - interest, remainingAmount);
             remainingAmount -= currentInstallment;
             totalPaid += currentInstallment + interest;
@@ -279,7 +287,8 @@ public class PaymentPlan extends AppCompatActivity {
         installmentList.add(totalPaidMap);
 
         Map<String, Object> durationMap = new HashMap<>();
-        String durationString = "Duration of Payment Plan: " + installments + " " + frequency + (installments > 1 ? "s" : "");
+        String durationString = "Duration of Payment Plan: " + installments + " " + frequency
+                + (installments > 1 ? "s" : "");
         durationMap.put("duration", durationString);
         installmentList.add(durationMap);
 
@@ -299,7 +308,7 @@ public class PaymentPlan extends AppCompatActivity {
     }
 
     private double computeInterest(double remainingAmount, double rate, String frequency) {
-        switch(frequency) {
+        switch (frequency) {
             case "Weekly":
                 return remainingAmount * (rate / 100) / 52;
             case "Fortnightly":
@@ -310,7 +319,9 @@ public class PaymentPlan extends AppCompatActivity {
                 return remainingAmount * (rate / 100) / 12;
         }
     }
-    private void createPaymentPlanInFirestore(String selectedDebt, double totalAmount, double rate, String frequency, Date startDate, double paymentAmount, List<Map<String, Object>> installmentList) {
+
+    private void createPaymentPlanInFirestore(String selectedDebt, double totalAmount, double rate, String frequency,
+            Date startDate, double paymentAmount, List<Map<String, Object>> installmentList) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Get a reference to the payment plans collection
@@ -319,7 +330,7 @@ public class PaymentPlan extends AppCompatActivity {
         // Create a new payment plan document
         Map<String, Object> planData = new HashMap<>();
         planData.put("uid", currentUser.getUid());
-        planData.put("debtId", selectedDebt);  // using the debt name as id, you might want to use the actual id
+        planData.put("debtId", selectedDebt); // using the debt name as id, you might want to use the actual id
         planData.put("firstDate", startDate);
         planData.put("lastDate", calculateLastDate(startDate, frequency, installmentList.size()));
         planData.put("paymentAmount", paymentAmount);

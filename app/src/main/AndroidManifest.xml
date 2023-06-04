@@ -30,8 +30,8 @@
         <activity android:name=".DebtInventoryActivity" />
         <activity android:name=".IncomeInventoryActivity" />
         <activity android:name=".ProfileActivity" />
-        <activity android:name=".PaymentPlan" />
-        <activity android:name=".PaymentPlanList" />
+        <activity android:name=".PaymentPlanActivity" />
+        <activity android:name=".PaymentPlanListActivity" />
         <activity android:name=".PaymentPlanDetailsActivity" />
         <service
             android:name=".NotificationsUtils"
@@ -41,7 +41,6 @@
             </intent-filter>
         </service>
     </application>
-
 
 
 </manifest>

@@ -26,14 +26,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class PaymentPlanList extends AppCompatActivity implements PaymentPlanAdapter.OnRemoveButtonClickListener {
+public class PaymentPlanListActivity extends AppCompatActivity
+        implements PaymentPlanAdapter.OnRemoveButtonClickListener {
 
-    private static final String TAG = "PaymentPlanList";
+    private static final String TAG = "PaymentPlanListActivity";
 
     private ListView paymentPlansListView;
     private PaymentPlanAdapter adapter;
     private FirebaseFirestore db;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,14 +55,13 @@ public class PaymentPlanList extends AppCompatActivity implements PaymentPlanAda
                 Log.d(TAG, "Selected plan ID: " + selectedPlanId);
 
                 // Start PaymentPlanDetailsActivity with the selected debtId
-                Intent intent = new Intent(PaymentPlanList.this, PaymentPlanDetailsActivity.class);
+                Intent intent = new Intent(PaymentPlanListActivity.this, PaymentPlanDetailsActivity.class);
                 intent.putExtra("debtId", selectedPlanId);
                 startActivity(intent);
             }
         });
 
     }
-
 
     private void fetchPaymentPlans() {
         db.collection("paymentPlans")
@@ -95,7 +94,8 @@ public class PaymentPlanList extends AppCompatActivity implements PaymentPlanAda
                                 // Check if amount is not null before accessing its value
                                 double amountValue = (amount != null) ? amount.doubleValue() : 0.0;
 
-                                String planDetails = "Name: " + planName + "\nAmount: " + amountValue + "\nDate Range: " + startDate + " - " + finishDate;
+                                String planDetails = "Name: " + planName + "\nAmount: " + amountValue + "\nDate Range: "
+                                        + startDate + " - " + finishDate;
                                 paymentPlans.add(planDetails);
                             }
 
@@ -117,7 +117,8 @@ public class PaymentPlanList extends AppCompatActivity implements PaymentPlanAda
     public void removePaymentPlan(int position) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String selectedPlanDetails = adapter.getItem(position);
-        String selectedPlanName = selectedPlanDetails.split("\n")[0].substring(6); // Extract the plan name from the plan details
+        String selectedPlanName = selectedPlanDetails.split("\n")[0].substring(6); // Extract the plan name from the
+                                                                                   // plan details
 
         db.collection("paymentPlans")
                 .whereEqualTo("debtId", selectedPlanName)
@@ -135,7 +136,9 @@ public class PaymentPlanList extends AppCompatActivity implements PaymentPlanAda
                                                 if (task.isSuccessful()) {
                                                     adapter.remove(selectedPlanDetails);
                                                     adapter.notifyDataSetChanged();
-                                                    Toast.makeText(PaymentPlanList.this, "Payment plan removed successfully", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(PaymentPlanListActivity.this,
+                                                            "Payment plan removed successfully", Toast.LENGTH_SHORT)
+                                                            .show();
                                                 } else {
                                                     Log.d(TAG, "Error deleting payment plan: ", task.getException());
                                                 }
@@ -148,6 +151,7 @@ public class PaymentPlanList extends AppCompatActivity implements PaymentPlanAda
                     }
                 });
     }
+
     @Override
     public void onRemoveButtonClick(int position) {
         removePaymentPlan(position);
